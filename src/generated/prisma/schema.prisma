@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  clerkId  String    @unique
+  email    String    @unique
+  name     String?
+  password String
+  role     String    @default("user") // "admin" or "user"
+  orders   Order[]
+  address  Address[]
+}
+
+model Address {
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  street  String
+  city    String
+  state   String
+  postal  String
+  country String
+}
+
+model Recommendation {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  reason    String
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  image2      String?
+  image3      String?
+  image4      String?
+  price       Float
+  rating      Float
+  stock       Int      @default(0)
+  brand       String?
+  category    String?
+  warranty    String?
+  offers      String?
+  createdAt   DateTime @default(now())
+
+  orders Order[] @relation("OrderProduct")
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  totalPrice Float
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+
+  products Product[] @relation("OrderProduct")
+}
