@@ -17,14 +17,14 @@ const ProductCard = ({ product }: { product: Product }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
 
-  const { addToCart, removeFromWishlist, addToWishlist, wishlist } = useCart();
+  const { addToCart, removeFromWishlist, addToWishlist, wishlistItems } = useCart();
   const router = useRouter();
 
   // On mount, check if item is already wishlisted
   useEffect(() => {
-    const isWished = wishlist?.some((item: Product) => item.id === product.id);
+    const isWished = wishlistItems?.some((item: Product) => item.id === product.id);
     setIsWishlisted(isWished);
-  }, [wishlist, product.id]);
+  }, [wishlistItems, product.id]);
 
   const toggleWishlist = () => {
     if (isWishlisted) {

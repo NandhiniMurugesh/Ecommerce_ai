@@ -1,26 +1,28 @@
-// app/api/orders/[id]/route.ts
+
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { NextResponse } from 'next/server';
 
-const validStatuses = ['pending', 'shipped', 'delivered', 'cancelled'];  // Add your valid statuses
-
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const { status } = await req.json();
-
-  // Validate status
-  if (!validStatuses.includes(status)) {
-    return NextResponse.json({ error: 'Invalid status value' }, { status: 400 });
-  }
-
+export async function PUT(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const updated = await prisma.order.update({
-      where: { id: parseInt(params.id) },
+    const orderId = Number(context.params.id);
+    if (isNaN(orderId)) {
+      return NextResponse.json({ error: 'Invalid order ID' }, { status: 400 });
+    }
+
+    const body = await req.json();
+    const status = body.status;
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
       data: { status },
     });
 
-    return NextResponse.json(updated);
-  } catch (err) {
-    console.error('Error updating order status:', err);  // Log the error for debugging
-    return NextResponse.json({ error: 'Failed to update status' }, { status: 500 });
+    return NextResponse.json(updatedOrder);
+  } catch (error) {
+    console.error('PUT /api/admin/orders/[id] failed:', error);
+    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
 }

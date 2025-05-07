@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '@shadcn/ui/card';
-import { Select, SelectItem, SelectTrigger, SelectValue } from '@shadcn/ui/select';
-import { Button } from '@shadcn/ui/button';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 interface Product {
   id: number;
